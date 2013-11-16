@@ -1,3 +1,5 @@
 *~
 *.pyc
 hidden.py
+trainingandtestdata/
+.DS_Store
