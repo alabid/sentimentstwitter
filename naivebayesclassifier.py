@@ -30,9 +30,9 @@ class NaiveBayesClassifier(Classifier):
     # Returns 0 if P(tweet | class=0) > P(tweet | class=1) * threshold
     # Return 1 otherwise
     def classify(self, text):
-        p0 = self.probTweetClass(text, 0)
-        p1 = self.probTweetClass(text, 1)
-        print (p0, p1)
+        p0 = self.probClassTweet(text, 0)
+        p1 = self.probClassTweet(text, 1)
+
         if p0 > p1 * self.threshold:
             return 0
         else:
