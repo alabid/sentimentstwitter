@@ -17,5 +17,5 @@ class UnigramFeature(Feature):
     Feature.__init__(self, 'unigram_' + unigram, weight)
 
   def evaluate(self, intext):
-    return 1 self.unigram in intext else 0
+    return 1 if self.unigram in intext else 0
 
