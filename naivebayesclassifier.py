@@ -4,8 +4,8 @@ import math
 from classifier import Classifier
 
 class NaiveBayesClassifier(Classifier):
-    def __init__(self, fname, grams=1):
-        Classifier.__init__(self, fname, grams)
+    def __init__(self, fname, grams=1, **kargs):
+        Classifier.__init__(self, fname, grams, **kargs)
 
         # sometimes a threshold value is trained during Bayesian
         # classification to avoid classifying too many 'documents' as
@@ -41,7 +41,7 @@ class NaiveBayesClassifier(Classifier):
 def main():    
     # file to get training data from
     fromf = 'trainingandtestdata/training.csv'
-    naive = NaiveBayesClassifier(fromf)
+    naive = NaiveBayesClassifier(fromf, filesubset = 1000)
     naive.trainClassifier()
 
     # optionally, pass in some tweet text to classify

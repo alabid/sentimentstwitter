@@ -18,6 +18,10 @@ class Classifier:
         self.force = kargs.get("force", False)
         self.numgrams = kargs.get("grams", 1)
 
+        # The number of lines to train on. Use during development
+        # to train on only a small chunk of the training set
+        self.filesubset = kargs.get("filesubset", "all")
+
         # counts of tweets in each class
         # [x,y] where
         # x -> number of tweets in negative class
@@ -92,7 +96,10 @@ class Classifier:
                      re.sub(r'[,.]', r'',
                             line[-1].lower().strip())) for line in r]
 
-        for each in stripped:
+        # Only train on lines 0 -> <last_line> of the training set
+        last_line = len(stripped) if self.filesubset == "all" else self.filesubset
+
+        for each in stripped[:last_line]:
             self.train(each[0], each[1])
 
         # store Classifier training data
