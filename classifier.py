@@ -75,7 +75,7 @@ class Classifier:
             self.incFC(f, c)
         self.incC(c)
 
-    # Trains the classifier based on tweets in self.file
+    # Trains the classifier based on tweets in self.modelfname
     # Stores the resulting data structures in a pickle file
     def trainClassifier(self):
         if self.force:
@@ -90,9 +90,9 @@ class Classifier:
         f = open(self.rawfname)
         r = csv.reader(f, delimiter=',', quotechar='"')
 
-        # get 0th column -> '0' if positive (class 1), '4' if negative (class 0)
+        # get 0th column -> '0' if negative (class 0), '4' if positive (class 1)
         # get 5th column -> contains text of tweet
-        stripped = [(0 if line[0] == '4' else 1, 
+        stripped = [(0 if line[0] == '0' else 1, 
                      re.sub(r'[,.]', r'',
                             line[-1].lower().strip())) for line in r]
 
