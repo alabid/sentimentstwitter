@@ -137,7 +137,7 @@ class Classifier:
         totals = sum([self.getFC(f,c) for c in [0, 1]])
         
         # calculate weighted average
-        return ((weight * ap) + (totals + real))/(weight + totals)
+        return ((weight * ap) + (totals * real))/(weight + totals)
 
     # Return 0 if negative; Return 1 if positive
     def classify(self, text):
