@@ -4,13 +4,16 @@ import math
 from classifier import Classifier
 
 class NaiveBayesClassifier(Classifier):
-    def __init__(self, fname, grams=1, **kargs):
-        Classifier.__init__(self, fname, grams, **kargs)
+    def __init__(self, fname, *args, **kargs):
+        Classifier.__init__(self, fname, *args, **kargs)
 
         # sometimes a threshold value is trained during Bayesian
         # classification to avoid classifying too many 'documents' as
-        # negative
-        self.threshold = 1
+        # one kind or the other
+        self.thresholds = [1.0, 1.0]
+
+    def setThresholds(self, neg=1.0, pos=1.0):
+        self.thresholds = [neg, pos]
 
     # Returns the (log) probability of a tweet, given a particular class
     # P(tweet | class)
@@ -27,21 +30,28 @@ class NaiveBayesClassifier(Classifier):
     def probClassTweet(self, text, c):
         return self.probTweetClass(text, c) + math.log(self.probC(c))
 
-    # Returns 0 if P(tweet | class=0) > P(tweet | class=1) * threshold
-    # Return 1 otherwise
+    # Returns 0 (negative) if P(class=0 | tweet) > P(class=1 | tweet) * thresholds[0]
+    # Return 1 (negative) if P(class=1 | tweet) > P(class=0 | tweet) * thresholds[1]
+    # Else return -1 (neutral)
     def classify(self, text):
         p0 = self.probClassTweet(text, 0)
         p1 = self.probClassTweet(text, 1)
 
-        if p0 > p1 * self.threshold:
+        if p0 > p1 * self.thresholds[0]:
             return 0
-        else:
+        elif p1 > p0 * self.thresholds[1]:
             return 1
+        else:
+            return -1
+
+    def __repr__(self):
+        return "Classifier info: (weight=%s, grams=%s, thresholds=%s)" % (self.weight, self.numgrams, self.thresholds)
+
 
 def main():    
     # file to get training data from
     fromf = 'trainingandtestdata/training.csv'
-    naive = NaiveBayesClassifier(fromf, filesubset = 1000)
+    naive = NaiveBayesClassifier(fromf)
     naive.trainClassifier()
 
     # optionally, pass in some tweet text to classify

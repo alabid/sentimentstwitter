@@ -9,14 +9,19 @@ class Classifier:
     # rawfname -> name of file containing raw training data
     # modelfname -> name of file to store classifier data
     # force == True iff user wants to overwrite classifier data
-    # grams -> 1, unigrams; 2, bigrams; 3, trigrams; and so on
+    # grams -> list of n-grams to use:
+    #   1, unigrams; 2, bigrams; 3, trigrams; and so on
+    #   so [1,2] means unigrams + bigrams
     # __init__(self, rawfname, modelfname, force, grams)
     def __init__(self, rawfname, *args, **kargs):
         self.rawfname = rawfname
 
         self.modelfname = kargs.get("modelfname", "model.dat")
         self.force = kargs.get("force", False)
-        self.numgrams = kargs.get("grams", 1)
+        self.numgrams = kargs.get("grams", [1])
+
+        # weight to use in self.weightedProb
+        self.weight = kargs.get("weight", 1.0)
 
         # The number of lines to train on. Use during development
         # to train on only a small chunk of the training set
@@ -61,10 +66,11 @@ class Classifier:
     # That is, even if the word 'obama' appears >10 times
     # in a tweet, it is counted only once in that particular tweet
     def getFeatures(self, item):
-        tokenized = nltk.word_tokenize(item)
         flist = []
-        for i in range(len(tokenized)-self.numgrams+1):
-            flist.append(" ".join(tokenized[i:i+self.numgrams]))
+        for gram in self.numgrams:
+            tokenized = nltk.word_tokenize(item)
+            for i in range(len(tokenized)-gram+1):
+                flist.append(" ".join(tokenized[i:i+gram]))
         return set(flist)
 
     # Train the classifier using item (for now, just text) on a specific class
@@ -81,11 +87,12 @@ class Classifier:
         if self.force:
             os.remove(self.modelfname)        
         elif os.path.exists(self.modelfname):
-            self.tweetcounts, self.ftweetcounts = pickle.load(
+            grams, self.tweetcounts, self.ftweetcounts = pickle.load(
                 open(self.modelfname, "rb")
             )
-            return
-            
+            # stop iff we have data for the number of grams we want
+            if grams == self.numgrams:                
+                return
 
         f = open(self.rawfname)
         r = csv.reader(f, delimiter=',', quotechar='"')
@@ -103,7 +110,7 @@ class Classifier:
             self.train(each[0], each[1])
 
         # store Classifier training data
-        pickle.dump([self.tweetcounts, self.ftweetcounts],
+        pickle.dump([self.numgrams, self.tweetcounts, self.ftweetcounts],
                     open(self.modelfname, "wb")
         )
 
@@ -119,6 +126,9 @@ class Classifier:
     def probC(self, c):
         return self.getC(c)/self.getTotal()
 
+    def setWeight(self, w):
+        self.weight = w
+
     # Method of smoothing:
     # Start with an assumed probability (ap) for each word in each class
     # Then, return weighted probability of real probability (probFC)
@@ -129,7 +139,7 @@ class Classifier:
     # so P('dude' | class=0) = 0.5 and P('dude' | class=1) = 0.5
     # then when we find one 'dude' that's positive,
     # P('dude' | class=0) = 0.25 and P('dude' | class=1) = 0.75
-    def weightedProb(self, f, c, weight=1.0, ap=0.5):
+    def weightedProb(self, f, c, ap=0.5):
         # calculate current probability
         real = self.probFC(f, c)
         
@@ -137,9 +147,11 @@ class Classifier:
         totals = sum([self.getFC(f,c) for c in [0, 1]])
         
         # calculate weighted average
-        return ((weight * ap) + (totals * real))/(weight + totals)
+        return ((self.weight * ap) + (totals * real))/(self.weight + totals)
 
     # Return 0 if negative; Return 1 if positive
     def classify(self, text):
         raise Exception("You must subclass 'Classifier' to classify tweets")
 
+    def __repr__(self):
+        return "Classifier info: (weight=%s, grams=%s)" % (self.weight, self.numgrams)
