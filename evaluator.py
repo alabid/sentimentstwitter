@@ -42,12 +42,15 @@ class Evaluator:
     
         correctall = correctpos + correctneg
         totalall = totalpos + totalneg
+        # record deviation between positive and negative results
+        devall = abs(correctpos-correctneg)
         
         print "="*100
         print classifier
         print "Accuracy for Positives: %.2f%%" % (float(correctpos)*100/totalpos)
         print "Accuracy for Negatives: %.2f%%" % (float(correctneg)*100/totalneg)
         print "Accuracy for (Positives|Negatives): %.2f%%" % (float(correctall)*100/totalall)
+        print "Correlation for (Positives|Negatives): %.2f%%" % (100-float(devall)*100/totalall)
         print "="*100
         return float(correctall)*100/totalall
 

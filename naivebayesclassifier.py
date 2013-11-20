@@ -38,9 +38,9 @@ class NaiveBayesClassifier(Classifier):
         p1 = self.probClassTweet(text, 1)
 
         if p0 > p1 * self.thresholds[0]:
-            return 0
-        elif p1 > p0 * self.thresholds[1]:
             return 1
+        elif p1 > p0 * self.thresholds[1]:
+            return 0
         else:
             return -1
 
