@@ -4,7 +4,7 @@ import math
 from classifier import Classifier
 
 class MaxEntClassifier(Classifier):
-    def __init__(self, fname, grams=1, **kargs):
+    def __init__(self, fname, grams=[1], **kargs):
         Classifier.__init__(self, fname, grams, **kargs)
 
         # Dictionary {unigram -> <UnigramFeature> holding that <unigram>}
@@ -21,9 +21,9 @@ class MaxEntClassifier(Classifier):
         # equal to 1 if unigram is in <text>, 0 if not
         unigrams = self.getFeatures(text)
 
-        text_features = [self.features[u] for u in unigrams]
+        text_features = [self.features.get(u, None) for u in unigrams]
         
-        odds_ratio = sum([f.weight for f in text_features])
+        odds_ratio = sum([f.weight for f in text_features if f != None])
 
         return 1 if odds_ratio > 0 else 0
 
@@ -33,7 +33,6 @@ def main():
     fromf = 'trainingandtestdata/training.csv'
     ent = MaxEntClassifier(fromf, filesubset = 1000)
     ent.trainClassifier()
-    print ent.ftweetcounts.keys()
 
     # optionally, pass in some tweet text to classify
     if len(sys.argv) == 2:
