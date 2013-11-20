@@ -7,7 +7,6 @@ import cPickle as pickle
 
 class Classifier:
     # rawfname -> name of file containing raw training data
-    # modelfname -> name of file to store classifier data
     # force == True iff user wants to overwrite classifier data
     # grams -> list of n-grams to use:
     #   1, unigrams; 2, bigrams; 3, trigrams; and so on
@@ -16,9 +15,15 @@ class Classifier:
     def __init__(self, rawfname, *args, **kargs):
         self.rawfname = rawfname
 
-        self.modelfname = kargs.get("modelfname", "model.dat")
         self.force = kargs.get("force", False)
         self.numgrams = kargs.get("grams", [1])
+        
+        # create modelfname using numgrams variable
+        # e.g if self.numgrams = [1,2], then
+        # self.modelfname = 'model1-2.dat'
+        self.modelfname = "model%s.dat" % \
+                          (reduce(lambda x, y: str(x)+'-'+str(y),
+                                  self.numgrams))
 
         # weight to use in self.weightedProb
         self.weight = kargs.get("weight", 1.0)

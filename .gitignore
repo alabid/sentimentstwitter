@@ -4,4 +4,5 @@
 hidden.py
 trainingandtestdata/
 .DS_Store
-model.dat
+model*.dat
+results.txt

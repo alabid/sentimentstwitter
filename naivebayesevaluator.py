@@ -9,7 +9,11 @@ class NaiveBayesEvaluator(Evaluator):
 
     def run(self):
         bestscore = 0
-        bestclassifier = None
+        bestg = None
+        bestw = None
+        bestt1 = None
+        bestt2 = None
+
         for grams in self.allgrams:
             c = NaiveBayesClassifier(self.rawfname,
                                      grams=grams)
@@ -25,20 +29,19 @@ class NaiveBayesEvaluator(Evaluator):
 
                         if bestscore < score:
                             bestscore = score
-                            bestclassifier = c
+                            bestg, bestw, bestt1, bestt2 = grams, w, t1, t2
     
         print "Maximum accuracy achieved: %.2f%%" %  bestscore
-        print "Best classifier: "
-        print bestclassifier
+        print "grams=%s, weight=%s, threshold=%s" % (bestg, bestw, [t1, t2])
 
 def main():
     trainfile = "trainingandtestdata/training.csv"
     testfile = "trainingandtestdata/testing.csv"
 
     nbEvaluator = NaiveBayesEvaluator(trainfile, testfile,
-                                      allgrams=[[1]],
-                                      allweights=[0.1, 0.5, 1.0, 1.5, 2.0],
-                                      allthresholds=[0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+                                      allgrams=[[1], [1, 2]],
+                                      allweights=[0.1, 0.2, 0.3, 0.4, 0.5],
+                                      allthresholds=[1, 10, 20])
 
     nbEvaluator.run()
     
