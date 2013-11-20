@@ -1,4 +1,6 @@
 # Implementation of Naive Bayes Classifier for tweets
+# TODO: to put options to set options in classifier like:
+#  weight, grams, and thresholds 
 import sys
 import math
 from classifier import Classifier
@@ -31,16 +33,16 @@ class NaiveBayesClassifier(Classifier):
         return self.probTweetClass(text, c) + math.log(self.probC(c))
 
     # Returns 0 (negative) if P(class=0 | tweet) > P(class=1 | tweet) * thresholds[0]
-    # Return 1 (negative) if P(class=1 | tweet) > P(class=0 | tweet) * thresholds[1]
+    # Return 1 (positive) if P(class=1 | tweet) > P(class=0 | tweet) * thresholds[1]
     # Else return -1 (neutral)
     def classify(self, text):
         p0 = self.probClassTweet(text, 0)
         p1 = self.probClassTweet(text, 1)
 
         if p0 > p1 * self.thresholds[0]:
-            return 1
-        elif p1 > p0 * self.thresholds[1]:
             return 0
+        elif p1 > p0 * self.thresholds[1]:
+            return 1
         else:
             return -1
 

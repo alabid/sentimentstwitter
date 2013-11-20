@@ -1,4 +1,5 @@
 # Contains implement of Naive Bayes Evaluator for tweets
+# TODO: add options to print to std and/or store in csv
 from evaluator import Evaluator
 from naivebayesclassifier import NaiveBayesClassifier
 
