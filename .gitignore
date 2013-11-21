@@ -6,3 +6,5 @@ trainingandtestdata/
 .DS_Store
 model*.dat
 results.txt
+todos.txt
+*evaluatorstats*
