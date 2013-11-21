@@ -10,7 +10,7 @@ class MaxEntEvaluator(Evaluator):
         self.maxent_args = maxent_args
 
     def run(self):
-        ent = MaximumEntropyClassifier(self.rawfname, **self.maxent_args)                                      
+        ent = MaximumEntropyClassifier(self.rawfname, **self.maxent_args)
         print 'Initialized classifier, about to train...'
         ent.trainClassifier()
 
