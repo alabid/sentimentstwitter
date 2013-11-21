@@ -4,6 +4,7 @@ import re
 import nltk
 import os
 import cPickle as pickle
+import random
 
 class Classifier:
     # rawfname -> name of file containing raw training data
@@ -121,6 +122,44 @@ class Classifier:
 
         f.close()
 
+    # Return <n> tweets from the training set where <pct_pos> of the tweets
+    # have positive sentiment and (1 - <pct_pos>) have negative sentiment
+    def getSampleTweets(self, n, pct_pos = .5):
+        random.seed(10)
+        numpos, numneg = 0, 0
+        targetpos, targetneg = int(n * pct_pos), int(n * (1 - pct_pos))
+
+        # Should have <n> lines in the end
+        sample = []
+
+        f = open(self.rawfname)
+        r = csv.reader(f, delimiter=',', quotechar='"')
+
+        # get 0th column -> '0' if negative (class 0), '4' if positive (class 1)
+        # get 5th column -> contains text of tweet
+        stripped = [(0 if line[0] == '0' else 1, 
+                     re.sub(r'[,.]', r'',
+                            line[-1].lower().strip())) for line in r]
+
+        random.shuffle(stripped)
+        
+        i = 0
+
+        # Read through the shuffled list of examples until there are 
+        # <targetpos> positive tweets and <targetneg> negative tweets
+        # in our sample
+        while numpos < targetpos or numneg < targetneg:
+            curtweet = stripped[i]
+
+            if curtweet[0] == 0 and numneg < targetneg:
+                numneg += 1
+                sample.append(curtweet)
+            elif curtweet[0] == 1 and numpos < targetpos:
+                numpos += 1
+                sample.append(curtweet)
+            i += 1
+
+        return sample
     # Return the probability of a feature being in a particular class
     def probFC(self, f, c):
         if self.getC(c) == 0: 
