@@ -90,7 +90,7 @@ def main():
     parser.add_argument("--stdout", dest="stdout", 
                         action="store_true", default=False)
     parser.add_argument("-g", dest="g", nargs="+",
-                        metavar="G1 [G2[...]]", required=True)
+                        metavar="x,y,z,..", required=True)
     parser.add_argument("-w", dest="w",
                         metavar="START, END, STEP", required=True)
     parser.add_argument("-t", dest="t",
