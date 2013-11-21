@@ -13,6 +13,7 @@ class Evaluator:
     #   [0.1, 1.0] means use weight=0.1, then weight=1.0
     def __init__(self, trainfname, testfname, *args, **kargs):
         self.testdata = self.readTestData(testfname)
+        print 'Test data loaded'
         self.rawfname = trainfname
 
         self.allgrams = kargs.get("allgrams")
@@ -39,6 +40,7 @@ class Evaluator:
                 if classifier.classify(text) == 1:
                     correctpos += 1
                 totalpos += 1
+            print correctpos, correctneg, totalpos, totalneg
     
         correctall = correctpos + correctneg
         totalall = totalpos + totalneg
