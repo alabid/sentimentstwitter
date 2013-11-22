@@ -2,17 +2,18 @@
 import sys
 import csv
 import re
-import math
+import os
+import cPickle as pickle
+
 from classifier import Classifier
 from evaluator import Evaluator
 from nltk.classify.maxent import MaxentClassifier
 
 class MaximumEntropyClassifier(Classifier):
-    def __init__(self, rawfname, min_occurences = 2, grams=[1], **kargs):
+    def __init__(self, rawfname, min_occurences=1, **kargs):
         Classifier.__init__(self, rawfname, **kargs)
 
         self.min_occurences = min_occurences
-        self.numgrams = grams
 
         # Maintains all training examples
         self.all_training_examples = []
@@ -34,7 +35,17 @@ class MaximumEntropyClassifier(Classifier):
         self.min_lldelta = kargs.get('min_lldelta', None)
 
     
-    def initUnigramFeatures(self):
+    def initFeatures(self):
+        '''
+        Grabs a sample of size <self.filesubet> (half of which are pos., half neg.)
+        and extracts features for each example. Note that features are 1, 2, ... grams
+        based on <self.numgrams>
+
+        Since there are far too many features using all uni/bi/...grams, only features
+        that were seen more than <self.min_occurences> times (over all examples) are kept.
+        Feature vectors are then padded with 0s for each feature that didn't appear in 
+        a given training example
+        '''
 
         training_sample = self.getSampleTweets(self.filesubset)
         print 'Training on %i lines' % len(training_sample)
@@ -67,10 +78,12 @@ class MaximumEntropyClassifier(Classifier):
         return shrunk
 
 
-    # Set up <self.shrunk_training_examples>, which is a list of elements of the form:
-    # ({features}, classification) where {features} is made up of all features in <shrunk_features>
-    # and a 1 if the given feature was in a given example
     def initShrunkExamples(self, shrunk_features):
+        '''
+        Set up <self.shrunk_training_examples>, a list of tuples of the form:
+        ({features}, classification) where {features} is made up of all features in <shrunk_features>
+        and a 1 if the given feature was in a given example
+        '''
 
         # Set <self.shrunk_training_examples> to include only features in <shrunk_features>
         # with a 1 indicating presence of a feature, 0 otherwise
@@ -84,9 +97,11 @@ class MaximumEntropyClassifier(Classifier):
             self.shrunk_training_examples.append((shrunk_feature_vector, example[1]))
 
 
-    # Update <self.all_features> to include the new features seen, and return a 
-    # dictionary containing '1' for each of those features
     def getFeatureDict(self, featureset):
+        '''
+        Update <self.all_features> to include the new features seen, and return a 
+        dictionary containing '1' for each of those features
+        '''
         feature_dict = {}
 
         for feat in featureset:
@@ -98,7 +113,12 @@ class MaximumEntropyClassifier(Classifier):
 
 
     def trainClassifier(self):
-        self.initUnigramFeatures()
+        '''
+        Calculates features and trains the maxent classifier, storing the resulting
+        model in <self.model>
+        '''
+
+        self.initFeatures()
         print 'Done reading in training examples'
         kargs = {
             'algorithm' : 'gis',
@@ -107,6 +127,7 @@ class MaximumEntropyClassifier(Classifier):
             kargs['max_iter'] = self.max_iter
 
         self.model = MaxentClassifier.train(self.shrunk_training_examples, **kargs)
+        self.pickleModel()
         print 'Max ent model built'
 
 
@@ -115,6 +136,24 @@ class MaximumEntropyClassifier(Classifier):
         feature_vector = self.getFeatureDict(feature_set)
 
         return self.model.classify(feature_vector)
+
+    def pickleModel(self, model_name=None):
+        '''
+        Saves the current Classifier object in a file called:
+        "maxent_<len of subset used>_<min num a feature was seen>_<number of grams used>"
+        Note that every model uses increasing number of n-grams, so the length tells us 
+        the max n-gram (i.e. length of 2 indicates we used unigrams and bigrams while length
+        of 1 indicates we only used unigrams)
+        '''
+        if model_name == None:
+            model_name = 'maxentpickles/maxent_%i_%i_%i.dat' % \
+                         (self.filesubset, self.min_occurences, len(self.numgrams))
+
+        outfile = open(model_name, "wb")
+        pickle.dump(self, outfile)
+
+        outfile.close()
+
 
 
 def main():    
