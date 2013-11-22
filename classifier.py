@@ -196,6 +196,7 @@ class Classifier:
         # calculate weighted average
         return ((self.weight * ap) + (totals * real))/(self.weight + totals)
 
+
     # Return 0 if negative; Return 1 if positive
     def classify(self, text):
         raise Exception("You must subclass 'Classifier' to classify tweets")
