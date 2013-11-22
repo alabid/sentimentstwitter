@@ -56,13 +56,15 @@ def main():
 
     # optionally, pass in some tweet text to classify
     if len(sys.argv) == 2:
-        result = naive.classify(sys.argv[1])
+        print
+        text = sys.argv[1]
+        result = naive.classify(text)
         if result == 0:
-            print "Negative"
+            print "'%s' predicted to be Negative" % text
         elif result == 1:
-            print "Positive"
+            print "'%s' predicted to be Positive" % text
         else:
-            print "Neutral"
+            print "'%s' predicted to be Neutral" % text
     
 
 if __name__ == "__main__":

@@ -97,7 +97,8 @@ class Classifier:
                 open(self.modelfname, "rb")
             )
             # stop iff we have data for the number of grams we want
-            if grams == self.numgrams:                
+            if grams == self.numgrams:
+                print "Model retrieved from '%s'" % self.modelfname
                 return
 
         f = open(self.rawfname)
@@ -119,6 +120,8 @@ class Classifier:
         pickle.dump([self.numgrams, self.tweetcounts, self.ftweetcounts],
                     open(self.modelfname, "wb")
         )
+
+        print "Model stored in '%s'" % self.modelfname
 
         f.close()
 

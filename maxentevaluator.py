@@ -12,7 +12,7 @@ class MaxEntEvaluator(Evaluator):
         self.maxent_args = maxent_args
 
     def run(self):
-        ent = MaximumEntropyClassifier(self.rawfname, **self.maxent_args)                                      
+        ent = MaximumEntropyClassifier(self.rawfname, **self.maxent_args)
         print 'Initialized classifier, about to train...'
         ent.trainClassifier()
 
@@ -47,9 +47,3 @@ def main():
 
 if __name__ == '__main__':
   main()
-
-# Classifier info: (weight=1.0, grams=[1, 2])
-# Accuracy for Positives: 73.63%
-# Accuracy for Negatives: 68.36%
-# Accuracy for (Positives|Negatives): 71.03%
-# Correlation for (Positives|Negatives): 96.38%
