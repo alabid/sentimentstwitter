@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title>Carleton Sentiments!</title>
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+      <!-- Place favicon.ico and apple-touch-icon(s) in the root directory -->
+
+      <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+      <link rel="stylesheet" href="/static/css/normalize.css">
+      <link rel="stylesheet" href="/static/css/main.css">
+    </head>
+    <body>
+      <!--[if lt IE 8]>
+          <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+          <![endif]-->
+      
+      <!-- Add your site or application content here -->
+      <header>Carleton Sentiments</header>
+      <form>
+        <input type="text" placeholder="Justin Bieber" class="span5 form-control" name="query" value="{{query}}">
+        <span id="using">using</span>
+        <select name="classifier-type">
+          <option value="0">Naive Bayes</option>
+          <option value="1">Max Entropy</option>
+        </select>
+        <button type="submit" class="btn btn-primary btn-lg" role="button">Search</button>
+      </form>
+
+      <div id="visuals" style="display:none;" pos={{poscount}} neg={{negcount}}>
+        <div class="page-header">
+          <h4>Sentiment Analysis Results for '{{query}}' <small>Positive in Green-ish; Negative in Pink-ish</small></h4>
+          <h5>Positives: {{poscount}} ({{pospercent}}%); Negatives: {{negcount}} ({{negpercent}}%)</h5>
+        </div>
+      </div>
+      
+      <div id="tweets" style="display:none;">
+        <ul class="nav nav-list">
+          <li class="nav-header">
+            <b>Tweets about '{{query}}'</b>
+          </li>
+          {% for item in tweets %}
+          <li class="sent-{{item[0]}}">
+            <p class="tweet-text">{{ escape(item[1].text) }}</p>
+            <p class="user">By {{ escape(item[1].user.screen_name) }}</p>
+            <p>Posted <span class="timeago" title="{{escape(item[1].created_at.isoformat())}}">{{escape(item[1].created_at.isoformat())}}</span></p>
+          </li>
+          {% end %}
+        </ul>
+      </div>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+      <script>window.jQuery || document.write('<script src="/static/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="/static/js/vendor/jquery.timeago.js"></script>
+        <script src="/static/js/main.js"></script>        
+        <footer>
+          <p>Made by <a target="_blank" href="http://github.com/alabid">Daniel Alabi</a> and <a target="_blank" href="http://github.com/nrjones8">Nick Jones</a> &nbsp;&copy; 2013</p>
+        </footer>
+    </body>
+</html>

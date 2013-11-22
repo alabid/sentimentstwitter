@@ -38,7 +38,8 @@ class NaiveBayesEvaluator(Evaluator):
         self.results = []
 
     def flushToCSV(self):
-        fname = "stats/nbevaluatorstats%s.csv" % str(datetime.datetime.now())
+        fname = "stats/nbevaluatorstats%s.csv" % \
+                str(datetime.datetime.now()).replace(' ', '-')
         with open(fname, "wb") as f:
             w = csv.writer(f, delimiter=',', quotechar='"')
             # write out header            
