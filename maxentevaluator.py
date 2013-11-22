@@ -1,4 +1,6 @@
 
+
+import cPickle as pickle
 from evaluator import Evaluator
 from maxentclassifier import MaximumEntropyClassifier
 
@@ -16,25 +18,38 @@ class MaxEntEvaluator(Evaluator):
 
         self.evaluate(ent)
 
+    def runFromPickle(self, picklefile):
+      f = open(picklefile, "rb")
+      ent = pickle.load(f)
+      f.close()
+
+      print 'Loaded classifier from', picklefile
+
+      self.evaluate(ent)
 
 def main():
     trainfile = "trainingandtestdata/training.csv"
     testfile = "trainingandtestdata/testing.csv"
 
     maxent_args = {
-      'filesubset' : 2000,
-      'min_occurences' : 5,
-      'max_iter' : 5,
+      'filesubset' : 3000,
+      'min_occurences' : 3,
+      'max_iter' : 4,
+      'grams' : [1]
     }
     maxent_evaluator = MaxEntEvaluator(trainfile, 
                                        testfile,
                                        maxent_args,
-                                       min_occurences = 2,
-                                       allgrams=[[1]],
                                        stdout = True
                                        )
-
     maxent_evaluator.run()
+    #maxent_evaluator.runFromPickle('maxentpickles/maxent_100_1_2.dat')
 
 if __name__ == '__main__':
   main()
+
+# Classifier info: (weight=1.0, grams=[1, 2])
+# Accuracy for Positives: 73.63%
+# Accuracy for Negatives: 68.36%
+# Accuracy for (Positives|Negatives): 71.03%
+# Correlation for (Positives|Negatives): 96.38%
