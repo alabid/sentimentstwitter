@@ -1,6 +1,8 @@
 
 
 import cPickle as pickle
+import os
+
 from evaluator import Evaluator
 from maxentclassifier import MaximumEntropyClassifier
 
@@ -27,6 +29,38 @@ class MaxEntEvaluator(Evaluator):
 
       self.evaluate(ent)
 
+    def testAllPickles(self, pickledir='maxentpickles/'):
+      pickle_files = os.listdir(pickledir)
+
+      for pick in pickle_files:
+        self.runFromPickle(pickledir + pick)
+
+    def buildManyModels(self):
+      '''
+
+      '''
+      all_filesubsets = [2000, 4000, 6000]
+
+      all_min_occurences = [1, 3, 5]
+      max_iter = 4
+      all_grams = [[1], [1,2]]
+
+      for filesubset in all_filesubsets:
+        for min_occurence in all_min_occurences:
+          for grams in all_grams:
+            self.maxent_args = {
+              'filesubset' : filesubset,
+              'min_occurences' : min_occurence,
+              'max_iter' : max_iter,
+              'grams' : grams
+            }
+            ent = MaximumEntropyClassifier(self.rawfname, **self.maxent_args)
+            print 'About to train with', self.maxent_args
+            ent.trainClassifier()
+            self.evaluate(ent)
+
+
+
 def main():
     trainfile = "trainingandtestdata/training.csv"
     testfile = "trainingandtestdata/testing.csv"
@@ -42,8 +76,10 @@ def main():
                                        maxent_args,
                                        stdout = True
                                        )
-    maxent_evaluator.run()
+    maxent_evaluator.buildManyModels()
+    #maxent_evaluator.run()
     #maxent_evaluator.runFromPickle('maxentpickles/maxent_100_1_2.dat')
+    #maxent_evaluator.testAllPickles()
 
 if __name__ == '__main__':
   main()
