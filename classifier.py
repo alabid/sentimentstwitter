@@ -1,4 +1,7 @@
-# Contains implementation of a generic Classifier for tweets
+'''
+Contains main implementation of a generic Classifier for tweets.
+Reads in language model and stores into a model.
+'''
 import csv
 import re
 import nltk
@@ -7,12 +10,14 @@ import cPickle as pickle
 import random
 
 class Classifier:
-    # rawfname -> name of file containing raw training data
-    # force == True iff user wants to overwrite classifier data
-    # grams -> list of n-grams to use:
-    #   1, unigrams; 2, bigrams; 3, trigrams; and so on
-    #   so [1,2] means unigrams + bigrams
-    # __init__(self, rawfname, modelfname, force, grams)
+    '''
+    rawfname -> name of file containing raw training data
+    force == True iff user wants to overwrite classifier data
+    grams -> list of n-grams to use:
+             1, unigrams; 2, bigrams; 3, trigrams; and so on
+             so [1,2] means unigrams + bigrams
+    __init__(self, rawfname, modelfname, force, grams)
+    '''
     def __init__(self, rawfname, *args, **kargs):
         self.rawfname = rawfname
 
@@ -45,33 +50,45 @@ class Classifier:
         # y -> number of times feature appears in positive class
         self.ftweetcounts = {}
 
-    # Increment count of a feature/class pair
     def incFC(self, f, c):
+        '''
+        Increment count of a feature/class pair
+        '''
         self.ftweetcounts.setdefault(f, [0, 0])
         self.ftweetcounts[f][c] += 1
 
-    # Increment count of a class
     def incC(self, c):
+        '''        
+        Increment count of a class
+        '''
         self.tweetcounts[c] += 1
 
-    # Return number of times a features has appeared in a class
     def getFC(self, f, c):
+        '''
+        Return number of times a features has appeared in a class
+        '''
         if f in self.ftweetcounts:
             return float(self.ftweetcounts[f][c])
         return 0.0
 
-    # Return number of features in a class
     def getC(self, c):
+        '''
+        Return number of features in a class
+        '''
         return float(self.tweetcounts[c])
     
-    # Return total number of features 
     def getTotal(self):
+        '''
+        Return total number of features 
+        '''
         return sum(self.tweetcounts)
 
-    # Each feature has weight 1
-    # That is, even if the word 'obama' appears >10 times
-    # in a tweet, it is counted only once in that particular tweet
     def getFeatures(self, item):
+        '''
+        Each feature has weight 1
+        That is, even if the word 'obama' appears >10 times
+        in a tweet, it is counted only once in that particular tweet
+        '''
         flist = []
         for gram in self.numgrams:
             tokenized = nltk.word_tokenize(item)
