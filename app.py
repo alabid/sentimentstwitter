@@ -6,6 +6,7 @@ import tweepy
 import os
 from hidden import *
 
+from maxentclassifier import MaximumEntropyClassifier
 from naivebayesclassifier import NaiveBayesClassifier
 
 # name of training set file
@@ -16,16 +17,14 @@ nb = NaiveBayesClassifier(fname, grams=[1,2])
 nb.setThresholds(neg=1.0, pos=20.0)
 nb.setWeight(0.000000000005)
 nb.trainClassifier()
-
-# ment = MaximumEntropyClassifier(fname)
-# ment.ge
-# classifiers = [nb, ment]
-classifiers = [nb]
+ment = MaximumEntropyClassifier(fname)
+ment.trainClassifier()
+classifiers = [nb, ment]
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         query = self.get_argument("query", "").strip()
-        cchosen = int(self.get_argument("classifier", 0))
+        cchosen = int(self.get_argument("classifier-type", 0))
 
         auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
         auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)

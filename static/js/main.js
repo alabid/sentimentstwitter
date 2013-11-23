@@ -56,4 +56,10 @@ $( document ).ready(function() {
 
         $("#visuals").show();
     }
+
+    if (document.URL.indexOf("classifier-type=1") != -1) {
+        $("option[value='1']").attr("selected", "selected");
+    } else {
+        $("option[value='0']").attr("selected", "selected");
+    }    
 });
