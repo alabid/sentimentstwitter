@@ -152,6 +152,15 @@ footer {
     margin: 10px;
 }
 
+.sent-2 {
+    background: #eeeeee;
+    border-radius: 10px;
+    border-color: black;
+    padding: 20px;
+    margin: 10px;
+}
+
+
 body {
     margin-left: 50px;
     margin-right: 50px;

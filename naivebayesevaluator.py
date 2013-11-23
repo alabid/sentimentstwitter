@@ -30,8 +30,8 @@ import sys
 import argparse
 
 class NaiveBayesEvaluator(Evaluator):
-    def __init__(self, trainfile, testfile, *args, **kargs):
-        Evaluator.__init__(self, trainfile, testfile, *args, **kargs)
+    def __init__(self, trainfile, devfile, testfile, *args, **kargs):
+        Evaluator.__init__(self, trainfile, devfile, testfile, *args, **kargs)
 
         self.allthresholds = kargs.get("allthresholds")
         self.csvout = kargs.get("csvout", False)
@@ -53,6 +53,15 @@ class NaiveBayesEvaluator(Evaluator):
         print "Flushing results of Naive Bayes evaluation into '%s'..." % fname
 
     def run(self):
+        if not self.usedev:
+            for grams in self.allgrams:
+                c = NaiveBayesClassifier(self.rawfname,
+                                         grams=grams)
+                c.trainClassifier()
+                self.stdout = True
+                self.evaluate(c)
+            return
+            
         for grams in self.allgrams:
             c = NaiveBayesClassifier(self.rawfname,
                                      grams=grams)
@@ -83,6 +92,7 @@ def processWT(wstr):
 
 def main():
     trainfile = "trainingandtestdata/training.csv"
+    devfile = "trainingandtestdata/devset.csv"
     testfile = "trainingandtestdata/testing.csv"
 
     parser = argparse.ArgumentParser()
@@ -90,28 +100,32 @@ def main():
                         action="store_true", default=False)
     parser.add_argument("--stdout", dest="stdout", 
                         action="store_true", default=False)
+    parser.add_argument("--dev", dest="dev",
+                        action="store_true", default=False)
     parser.add_argument("-g", dest="g", nargs="+",
                         metavar="x,y,z,..", required=True)
     parser.add_argument("-w", dest="w",
-                        metavar="START, END, STEP", required=True)
+                        metavar="START, END, STEP", required=False)
     parser.add_argument("-t", dest="t",
-                        metavar="START, END, STEP", required=True)
+                        metavar="START, END, STEP", required=False)
 
     args = parser.parse_args()
-    grams = processGrams(args.g)        
-    weights = processWT(args.w)
-    thresholds = processWT(args.t)
+    grams = processGrams(args.g)
 
-    try:
-        nbEvaluator = NaiveBayesEvaluator(trainfile, testfile,
-                                          allgrams=grams,
-                                          allweights=weights,
-                                          allthresholds=thresholds,
-                                          csvout=args.csvout,
-                                          stdout=args.stdout)
-        nbEvaluator.run()
-    except:
-        parser.print_help()
+    if args.g and args.w and args.t:
+        weights = processWT(args.w)
+        thresholds = processWT(args.t)
+    else:
+        weights = thresholds = None
+    
+    nbEvaluator = NaiveBayesEvaluator(trainfile, devfile, testfile,
+                                      allgrams=grams,
+                                      allweights=weights,
+                                      allthresholds=thresholds,
+                                      csvout=args.csvout,
+                                      stdout=args.stdout,
+                                      usedev=args.dev)
+    nbEvaluator.run()
 
 if __name__ == "__main__":
     main()

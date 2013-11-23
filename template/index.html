@@ -44,9 +44,9 @@
           </li>
           {% for item in tweets %}
           <li class="sent-{{item[0]}}">
-            <p class="tweet-text">{{ escape(item[1].text) }}</p>
-            <p class="user">By {{ escape(item[1].user.screen_name) }}</p>
-            <p>Posted <span class="timeago" title="{{escape(item[1].created_at.isoformat())}}">{{escape(item[1].created_at.isoformat())}}</span></p>
+            <p class="tweet-text">{{ item[1].text }}</p>
+            <p class="user">By {{ item[1].user.screen_name }}</p>
+            <p>Posted <span class="timeago" title="{{escape(item[1].created_at.isoformat())}}">{{ item[1].created_at.isoformat() }}</span></p>
           </li>
           {% end %}
         </ul>

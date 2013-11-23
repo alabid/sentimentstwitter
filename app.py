@@ -13,11 +13,13 @@ fname = 'trainingandtestdata/training.csv'
 
 # train classifiers here first
 nb = NaiveBayesClassifier(fname, grams=[1,2])
-nb.setThresholds(neg=1.0, pos=10.0)
+nb.setThresholds(neg=1.0, pos=20.0)
+nb.setWeight(0.000000000005)
 nb.trainClassifier()
 
 # ment = MaximumEntropyClassifier(fname)
-# ment.trainClassifier()
+# ment.ge
+# classifiers = [nb, ment]
 classifiers = [nb]
 
 class MainHandler(tornado.web.RequestHandler):
@@ -40,6 +42,7 @@ class MainHandler(tornado.web.RequestHandler):
 
             if cresult == 0: negcount += 1
             elif cresult == 1: poscount += 1
+            else: cresult = 2
 
             tweets.append((cresult, result))
 

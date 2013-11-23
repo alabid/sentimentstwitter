@@ -27,7 +27,7 @@ class Classifier:
                                   self.numgrams))
 
         # weight to use in self.weightedProb
-        self.weight = kargs.get("weight", 0.2)
+        self.weight = kargs.get("weight", 0.00005)
 
         # The number of lines to train on. Use during development
         # to train on only a small chunk of the training set

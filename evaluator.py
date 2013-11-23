@@ -11,15 +11,21 @@ class Evaluator:
     #   so [[1], [2]] means evaluate on unigram model, then bigrams
     # allweights -> list of ALL weights (used in classifier.weightedProb) to use:
     #   [0.1, 1.0] means use weight=0.1, then weight=1.0
-    def __init__(self, trainfname, testfname, *args, **kargs):
-        self.testdata = self.readTestData(testfname)
+    def __init__(self, trainfname, devfname, testfname, *args, **kargs):
+        self.usedev = kargs.get("usedev", False)
+
+        if self.usedev:
+            self.testdata = self.readTestData(devfname)
+        else:
+            self.testdata = self.readTestData(testfname)
+            
         self.rawfname = trainfname
 
         self.allgrams = kargs.get("allgrams")
         self.allweights = kargs.get("allweights")
         # indicator variable to display evaluation results in STDOUT
         self.stdout = kargs.get("stdout", False)
-
+        
     # Prints the percent accuracy of the classifier on the test data
     def evaluate(self, classifier):
         totalneg = 0
