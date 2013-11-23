@@ -10,7 +10,7 @@ from evaluator import Evaluator
 from nltk.classify.maxent import MaxentClassifier
 
 class MaximumEntropyClassifier(Classifier):
-    def __init__(self, rawfname, min_occurences=1, **kargs):
+    def __init__(self, rawfname, min_occurences=5, **kargs):
         Classifier.__init__(self, rawfname, **kargs)
 
         self.min_occurences = min_occurences
@@ -26,15 +26,14 @@ class MaximumEntropyClassifier(Classifier):
         self.all_features = {}
         self.model = None
 
-        self.filesubset = kargs.get('filesubset', 'all')
+        self.filesubset = kargs.get('filesubset', 3000)
 
-        self.max_iter = kargs.get('max_iter', None)
-
-        # Terminate if a single iteration improves log likelihood by less than v
-        # (an argument passed to the max ent classifier)
-        self.min_lldelta = kargs.get('min_lldelta', None)
+        self.max_iter = kargs.get('max_iter', 4)
 
     
+    def setModel(self, model):
+        self.model = model
+
     def initFeatures(self):
         '''
         Grabs a sample of size <self.filesubet> (half of which are pos., half neg.)
@@ -117,17 +116,22 @@ class MaximumEntropyClassifier(Classifier):
         Calculates features and trains the maxent classifier, storing the resulting
         model in <self.model>
         '''
+        # check if pickled
+        pickled_model = self.checkForPickle()
+        if pickled_model:
+            self.model = pickled_model
+        else:
 
-        self.initFeatures()
-        print 'Done reading in training examples'
-        kargs = {
-            'algorithm' : 'gis',
-        }
-        if self.max_iter != None:
-            kargs['max_iter'] = self.max_iter
+            self.initFeatures()
+            print 'Done reading in training examples'
+            kargs = {
+                'algorithm' : 'gis',
+            }
+            if self.max_iter != None:
+                kargs['max_iter'] = self.max_iter
 
-        self.model = MaxentClassifier.train(self.shrunk_training_examples, **kargs)
-        self.pickleModel()
+            self.model = MaxentClassifier.train(self.shrunk_training_examples, **kargs)
+            self.pickleModel()
         print 'Max ent model built'
 
 
@@ -136,6 +140,18 @@ class MaximumEntropyClassifier(Classifier):
         feature_vector = self.getFeatureDict(feature_set)
 
         return self.model.classify(feature_vector)
+
+    def checkForPickle(self):
+        pickle_name = self.getPickleFileName()
+
+        if os.path.exists(pickle_name):
+            f = file(pickle_name, 'rb')
+            model = pickle.load(f)
+            f.close()
+
+            return model
+        else:
+            return False
 
     def pickleModel(self, model_name=None):
         '''
@@ -150,16 +166,30 @@ class MaximumEntropyClassifier(Classifier):
                          (self.filesubset, self.min_occurences, len(self.numgrams))
 
         outfile = open(model_name, "wb")
-        pickle.dump(self, outfile)
+        pickle.dump(self.model, outfile)
 
         outfile.close()
+
+    def getPickleFileName(self):
+        return 'maxentpickles/maxent_%i_%i_%i.dat' % \
+               (self.filesubset, self.min_occurences, len(self.numgrams))
+
+
 
 
 
 def main():    
     # file to get training data from
-    fromf = 'trainingandtestdata/training.csv'
-    ent = MaximumEntropyClassifier(fromf, filesubset = 500, max_iter = 20)
+    trainfile = "trainingandtestdata/training.csv"
+    testfile = "trainingandtestdata/testing.csv"
+
+    maxent_args = {
+      'filesubset' : 3500,
+      'min_occurences' : 5,
+      'max_iter' : 4,
+      'grams' : [1]
+    }
+    ent = MaximumEntropyClassifier(trainfile, **maxent_args)
     ent.trainClassifier()
 
     # optionally, pass in some tweet text to classify
