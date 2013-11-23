@@ -8,19 +8,21 @@ Options:
 --stdout -> print results to STDOUT
 
 Usage:
-python naivebayesevaluator.py [(--csvout | --stdout) -g <grams-list> 
+python naivebayesevaluator.py [(--csvout | --stdout) --dev -g <grams-list> 
                               -w <weights-start, weights-end, step>
                               -t <thresholds-start, thresholds-end, step>]
 
 For example, 
-python naivebayesevaluator.py --csvout -g 1 1,2 -w 0.1,1.5,0.5 -t 1.0,2.0,0.5
+python naivebayesevaluator.py --csvout --dev -g 1 1,2 -w 0.1,1.5,0.5 -t 1.0,2.0,0.5
 
-should evaluate naive bayes using:
+should evaluate naive bayes (on the DEV set) using:
 1. unigrams and unigrams + bigrams. 
 2. weights 0.1, 0.6, 1.1
 3. threshold values 1.0, 1.5, 2.0
 
 and store the result in the file 'stats/nbevaluatorstats<current datetime>.csv'.
+python naivebayesevaluator.py -g 1 1,2 should print out accuracy of 
+naive bayes on the TRAINING set.
 '''
 from evaluator import Evaluator
 from naivebayesclassifier import NaiveBayesClassifier
