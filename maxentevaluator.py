@@ -31,12 +31,9 @@ class MaxEntEvaluator(Evaluator):
       print 'Loaded classifier from', picklefile
       ent = MaximumEntropyClassifier(self.rawfname, **self.maxent_args)
       ent.setModel(ent_model)
-      print self.evaluate(ent)
-      # subset = ent.filesubset
-      # min_occurences = ent.min_occurences
-      # max_iter = ent.max_iter
-      # max_gram = len(ent.numgrams)
 
+      # Return everything but the classifer string
+      return self.evaluate(ent)[1:]
       
 
     def testAllPickles(self, pickledir='maxentpickles/'):
@@ -44,11 +41,10 @@ class MaxEntEvaluator(Evaluator):
       models = []
 
       for pick in pickle_files:
-        subset, min_occurences, max_iter, max_gram, _, accpos, accneg, accall, corrall = \
-            self.runFromPickle(pickledir + pick)
+        print self.runFromPickle(pickledir + pick)
+        accpos, accneg, accall, corrall = self.runFromPickle(pickledir + pick)
         
-        models.append([pick, subset, min_occurences, max_iter, max_gram, \
-                       accpos, accneg, accall, corrall])
+        models.append([pick, accpos, accneg, accall, corrall])
 
       self.flushToCSV(models)
 
@@ -60,10 +56,6 @@ class MaxEntEvaluator(Evaluator):
         w = csv.writer(f, delimiter=',', quotechar='"')
             # write out header            
         w.writerow(["model",
-                    "subset",
-                    "min_occurences",
-                    "max_iter",
-                    "max_gram",
                     "accpos",
                     "accneg",
                     "accall",
@@ -113,9 +105,9 @@ def main():
                                        stdout = True
                                        )
     #maxent_evaluator.testAllPickles()
-    maxent_evaluator.run()
+    #maxent_evaluator.run()
     #maxent_evaluator.runFromPickle('maxentpickles/maxent_3500_5_1.dat')
-    #maxent_evaluator.testAllPickles()
+    maxent_evaluator.testAllPickles()
 
 if __name__ == '__main__':
   main()

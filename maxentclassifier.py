@@ -10,7 +10,7 @@ from evaluator import Evaluator
 from nltk.classify.maxent import MaxentClassifier
 
 class MaximumEntropyClassifier(Classifier):
-    def __init__(self, rawfname, min_occurences=1, **kargs):
+    def __init__(self, rawfname, min_occurences=5, **kargs):
         Classifier.__init__(self, rawfname, **kargs)
 
         self.min_occurences = min_occurences
@@ -26,18 +26,13 @@ class MaximumEntropyClassifier(Classifier):
         self.all_features = {}
         self.model = None
 
-        self.filesubset = kargs.get('filesubset', 'all')
+        self.filesubset = kargs.get('filesubset', 3000)
 
-        self.max_iter = kargs.get('max_iter', None)
-
-        # Terminate if a single iteration improves log likelihood by less than v
-        # (an argument passed to the max ent classifier)
-        self.min_lldelta = kargs.get('min_lldelta', None)
+        self.max_iter = kargs.get('max_iter', 4)
 
     
     def setModel(self, model):
         self.model = model
-
 
     def initFeatures(self):
         '''
@@ -194,7 +189,7 @@ def main():
       'max_iter' : 4,
       'grams' : [1]
     }
-    ent = MaximumEntropyClassifier(fromf, filesubset = 500, max_iter = 20)
+    ent = MaximumEntropyClassifier(trainfile, **maxent_args)
     ent.trainClassifier()
 
     # optionally, pass in some tweet text to classify
