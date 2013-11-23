@@ -24,16 +24,20 @@ class MaxEntEvaluator(Evaluator):
 
     def runFromPickle(self, picklefile):
       f = open(picklefile, "rb")
-      ent = pickle.load(f)
+      # Pickle stores an NLTK model
+      ent_model = pickle.load(f)
       f.close()
 
       print 'Loaded classifier from', picklefile
-      subset = ent.filesubset
-      min_occurences = ent.min_occurences
-      max_iter = ent.max_iter
-      max_gram = len(ent.numgrams)
+      ent = MaximumEntropyClassifier(self.rawfname, **self.maxent_args)
+      ent.setModel(ent_model)
+      print self.evaluate(ent)
+      # subset = ent.filesubset
+      # min_occurences = ent.min_occurences
+      # max_iter = ent.max_iter
+      # max_gram = len(ent.numgrams)
 
-      return [subset, min_occurences, max_iter, max_gram] + self.evaluate(ent)
+      
 
     def testAllPickles(self, pickledir='maxentpickles/'):
       pickle_files = os.listdir(pickledir)
@@ -98,9 +102,9 @@ def main():
     testfile = "trainingandtestdata/testing.csv"
 
     maxent_args = {
-      'filesubset' : 3500,
+      'filesubset' : 3000,
       'min_occurences' : 5,
-      'max_iter' : 10,
+      'max_iter' : 4,
       'grams' : [1]
     }
     maxent_evaluator = MaxEntEvaluator(trainfile, 
@@ -108,9 +112,9 @@ def main():
                                        maxent_args,
                                        stdout = True
                                        )
-    maxent_evaluator.testAllPickles()
-    #maxent_evaluator.run()
-    #maxent_evaluator.runFromPickle('maxentpickles/maxent_100_1_2.dat')
+    #maxent_evaluator.testAllPickles()
+    maxent_evaluator.run()
+    #maxent_evaluator.runFromPickle('maxentpickles/maxent_3500_5_1.dat')
     #maxent_evaluator.testAllPickles()
 
 if __name__ == '__main__':
