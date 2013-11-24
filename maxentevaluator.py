@@ -10,12 +10,15 @@ from maxentclassifier import MaximumEntropyClassifier
 
 class MaxEntEvaluator(Evaluator):
 
-    def __init__(self, trainfile, testfile, maxent_args = {}, **kargs):
-        Evaluator.__init__(self, trainfile, testfile, **kargs)
-        # TODO add dictionary for arguments to pass to MaximumEntropyClassifier
+    def __init__(self, trainfile, devfile, testfile, maxent_args = {}, **kargs):
+        Evaluator.__init__(self, trainfile, devfile, testfile, **kargs)
         self.maxent_args = maxent_args
 
     def run(self):
+        '''
+        Trains a MaximumEntropyClassifier using <self.maxent_args> and evaluates
+        the trained model
+        '''
         ent = MaximumEntropyClassifier(self.rawfname, **self.maxent_args)
         print 'Initialized classifier, about to train...'
         ent.trainClassifier()
@@ -23,6 +26,9 @@ class MaxEntEvaluator(Evaluator):
         self.evaluate(ent)
 
     def runFromPickle(self, picklefile):
+      '''
+      Opens the NLTK model stored in <picklefile> and uses that model for evaluation
+      '''
       f = open(picklefile, "rb")
       # Pickle stores an NLTK model
       ent_model = pickle.load(f)
@@ -37,6 +43,9 @@ class MaxEntEvaluator(Evaluator):
       
 
     def testAllPickles(self, pickledir='maxentpickles/'):
+      '''
+      Tests all models stored in pickles from <pickledir>
+      '''
       pickle_files = os.listdir(pickledir)
       models = []
 
@@ -50,6 +59,10 @@ class MaxEntEvaluator(Evaluator):
 
     
     def flushToCSV(self, models, resultdir='maxentresults/'):
+      '''
+      Writes a file storing results from <models> to <resultdir>
+      File is named the current time stamp 
+      '''
       fname = resultdir + str(datetime.datetime.now()) + '.csv'
 
       with open(fname, "wb") as f:
@@ -65,7 +78,8 @@ class MaxEntEvaluator(Evaluator):
 
     def buildManyModels(self):
       '''
-
+      Uses every combination of the parameters specified below to create a
+      MaximumEntropyClassifier, train it, and evaluate it
       '''
       all_filesubsets = [2000, 4000, 6000]
 
@@ -91,23 +105,29 @@ class MaxEntEvaluator(Evaluator):
 
 def main():
     trainfile = "trainingandtestdata/training.csv"
+    devfile = "trainingandtestdata/devset.csv"
     testfile = "trainingandtestdata/testing.csv"
 
     maxent_args = {
-      'filesubset' : 3000,
+      'filesubset' : 6000,
       'min_occurences' : 5,
       'max_iter' : 4,
-      'grams' : [1]
+      'grams' : [1, 2]
     }
-    maxent_evaluator = MaxEntEvaluator(trainfile, 
+    maxent_evaluator = MaxEntEvaluator(trainfile,
+                                       devfile, 
                                        testfile,
                                        maxent_args,
                                        stdout = True
                                        )
-    #maxent_evaluator.testAllPickles()
-    #maxent_evaluator.run()
-    #maxent_evaluator.runFromPickle('maxentpickles/maxent_3500_5_1.dat')
-    maxent_evaluator.testAllPickles()
+    
+    # Could run:
+    # (1) To test all pickled models: maxent_evaluator.testAllPickles()
+    # (2) To create/read one cached one model and evaluate it: maxent_evaluator.run()
+    # (3) To build a ton of models: maxent_evaluator.buildManyModels()
+    # This will take a LONG time, and parameters should be tweaked within the method
+    maxent_evaluator.run()
+    #maxent_evaluator.runFromPickle('maxentpickles/maxent_3000_5_2.dat')
 
 if __name__ == '__main__':
   main()

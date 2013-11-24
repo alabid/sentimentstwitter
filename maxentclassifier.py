@@ -175,9 +175,6 @@ class MaximumEntropyClassifier(Classifier):
                (self.filesubset, self.min_occurences, len(self.numgrams))
 
 
-
-
-
 def main():    
     # file to get training data from
     trainfile = "trainingandtestdata/training.csv"
