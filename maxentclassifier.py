@@ -57,7 +57,6 @@ class MaximumEntropyClassifier(Classifier):
             feature_set = self.getFeatures(text)
 
             feature_vector = self.getFeatureDict(feature_set)
-            # TODO need to pad the feature vectors with 0s?
             self.all_training_examples.append((feature_vector, classification))       
 
         shrunk_features = self.shrinkFeatureSet()

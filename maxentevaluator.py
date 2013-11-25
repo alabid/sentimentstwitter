@@ -1,5 +1,3 @@
-
-
 import cPickle as pickle
 import os
 import datetime
@@ -109,16 +107,20 @@ def main():
     testfile = "trainingandtestdata/testing.csv"
 
     maxent_args = {
-      'filesubset' : 6000,
-      'min_occurences' : 5,
+      'filesubset' : 2000,
+      'min_occurences' : 4,
       'max_iter' : 4,
       'grams' : [1, 2]
     }
+    
+    # <stdout> controls whether or not to show output/progress
+    # <usedev> == True to use the dev. set for evaluation, otherwise use the test set
     maxent_evaluator = MaxEntEvaluator(trainfile,
                                        devfile, 
                                        testfile,
                                        maxent_args,
-                                       stdout = True
+                                       stdout = True,
+                                       usedev = False
                                        )
     
     # Could run:
@@ -126,8 +128,11 @@ def main():
     # (2) To create/read one cached one model and evaluate it: maxent_evaluator.run()
     # (3) To build a ton of models: maxent_evaluator.buildManyModels()
     # This will take a LONG time, and parameters should be tweaked within the method
-    maxent_evaluator.run()
-    #maxent_evaluator.runFromPickle('maxentpickles/maxent_3000_5_2.dat')
+    #maxent_evaluator.run()
+
+    # Uncomment the line below to run the better, pickled version
+    maxent_evaluator.runFromPickle('maxentpickles/maxent_4000_3_2.dat')
+    
 
 if __name__ == '__main__':
   main()
