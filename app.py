@@ -1,4 +1,7 @@
 #! /usr/bin/env python
+'''
+Main file to start tornado server
+'''
 import tornado.ioloop
 import tornado.web
 import urllib
@@ -21,7 +24,11 @@ ment = MaximumEntropyClassifier(fname)
 ment.trainClassifier()
 classifiers = [nb, ment]
 
+
 class MainHandler(tornado.web.RequestHandler):
+    '''
+    Handles request to main page
+    '''
     def get(self):
         query = self.get_argument("query", "").strip()
         cchosen = int(self.get_argument("classifier-type", 0))
@@ -31,6 +38,7 @@ class MainHandler(tornado.web.RequestHandler):
         
         api = tweepy.API(auth)
 
+        # search twitter
         results = api.search(q=urllib.quote(query)) if len(query) > 0 else []
 
         tweets = []
@@ -51,6 +59,8 @@ class MainHandler(tornado.web.RequestHandler):
                      % (float(negcount)*100/(poscount + negcount))
 
         self.set_header("Cache-Control","no-cache")
+
+        # render results of sentiment analysis on tweets in real-time
         self.render("index.html",
                     poscount = poscount,
                     negcount = negcount,

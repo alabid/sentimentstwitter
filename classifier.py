@@ -96,17 +96,23 @@ class Classifier:
                 flist.append(" ".join(tokenized[i:i+gram]))
         return set(flist)
 
-    # Train the classifier using item (for now, just text) on a specific class
-    # c -> class (number)
     def train(self, c, item):
+        '''
+        Trains the classifier using item (for now, just text) on a 
+        specific class
+        c -> class (number)
+        '''
+    
         features = self.getFeatures(item)
         for f in features:
             self.incFC(f, c)
         self.incC(c)
 
-    # Trains the classifier based on tweets in self.modelfname
-    # Stores the resulting data structures in a pickle file
     def trainClassifier(self):
+        '''
+        Trains the classifier based on tweets in self.modelfname
+        Stores the resulting data structures in a pickle file
+        '''
         if self.force:
             os.remove(self.modelfname)        
         elif os.path.exists(self.modelfname):
@@ -142,9 +148,11 @@ class Classifier:
 
         f.close()
 
-    # Return <n> tweets from the training set where <pct_pos> of the tweets
-    # have positive sentiment and (1 - <pct_pos>) have negative sentiment
     def getSampleTweets(self, n, pct_pos = .5):
+        '''
+        Return <n> tweets from the training set where <pct_pos> of the tweets
+        have positive sentiment and (1 - <pct_pos>) have negative sentiment
+        '''
         random.seed(10)
         numpos, numneg = 0, 0
         targetpos, targetneg = int(n * pct_pos), int(n * (1 - pct_pos))
@@ -180,30 +188,41 @@ class Classifier:
             i += 1
 
         return sample
-    # Return the probability of a feature being in a particular class
+
     def probFC(self, f, c):
+        '''
+        Return the probability of a feature being in a particular class
+        '''
         if self.getC(c) == 0: 
             return 0
         return self.getFC(f, c)/self.getC(c)
 
-    # Return the probability Prob(Class)
     def probC(self, c):
+        '''
+        Return the probability Prob(Class)
+        '''
         return self.getC(c)/self.getTotal()
 
     def setWeight(self, w):
+        '''
+        Set weight to use in classifier
+        '''
         self.weight = w
 
-    # Method of smoothing:
-    # Start with an assumed probability (ap) for each word in each class
-    # Then, return weighted probability of real probability (probFC)
-    # and assumed probability
-    # weight of 1.0 means ap is weighted as much as a word
-    # Bayesian in nature: 
-    # For example, the word 'dude' might not be in the corpus initially.
-    # so P('dude' | class=0) = 0.5 and P('dude' | class=1) = 0.5
-    # then when we find one 'dude' that's positive,
-    # P('dude' | class=0) = 0.25 and P('dude' | class=1) = 0.75
     def weightedProb(self, f, c, ap=0.5):
+        '''
+        Method of smoothing:
+        Start with an assumed probability (ap) for each word in each class
+        Then, return weighted probability of real probability (probFC)
+        and assumed probability
+        weight of 1.0 means ap is weighted as much as a word
+        Bayesian in nature: 
+        For example, the word 'dude' might not be in the corpus initially.
+        so assuming weight of 1.0, then
+        P('dude' | class=0) = 0.5 and P('dude' | class=1) = 0.5
+        then when we find one 'dude' that's positive,
+        P('dude' | class=0) = 0.25 and P('dude' | class=1) = 0.75
+        '''
         # calculate current probability
         real = self.probFC(f, c)
         
@@ -214,8 +233,10 @@ class Classifier:
         return ((self.weight * ap) + (totals * real))/(self.weight + totals)
 
 
-    # Return 0 if negative; Return 1 if positive
     def classify(self, text):
+        '''
+        Return 0 if negative; Return 1 if positive
+        '''
         raise Exception("You must subclass 'Classifier' to classify tweets")
 
     def __repr__(self):

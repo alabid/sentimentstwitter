@@ -114,20 +114,25 @@ def main():
     args = parser.parse_args()
     grams = processGrams(args.g)
 
-    if args.g and args.w and args.t:
-        weights = processWT(args.w)
-        thresholds = processWT(args.t)
-    else:
-        weights = thresholds = None
+    try:
+        if args.g and args.w and args.t:
+            weights = processWT(args.w)
+            thresholds = processWT(args.t)
+        else:
+            weights = thresholds = []
+            args.dev = False
+            
+        nbEvaluator = NaiveBayesEvaluator(trainfile, devfile, testfile,
+                                          allgrams=grams,
+                                          allweights=weights,
+                                          allthresholds=thresholds,
+                                          csvout=args.csvout,
+                                          stdout=args.stdout,
+                                          usedev=args.dev)        
+        nbEvaluator.run()
     
-    nbEvaluator = NaiveBayesEvaluator(trainfile, devfile, testfile,
-                                      allgrams=grams,
-                                      allweights=weights,
-                                      allthresholds=thresholds,
-                                      csvout=args.csvout,
-                                      stdout=args.stdout,
-                                      usedev=args.dev)
-    nbEvaluator.run()
+    except: 
+        parser.print_help()
 
 if __name__ == "__main__":
     main()

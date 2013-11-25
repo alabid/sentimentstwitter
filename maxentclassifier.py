@@ -1,4 +1,6 @@
-# Implementation of Naive Bayes Classifier for tweets
+'''
+Implementation of Maximum Entropy Classifier for tweets
+'''
 import sys
 import csv
 import re

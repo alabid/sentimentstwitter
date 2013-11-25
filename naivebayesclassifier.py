@@ -1,4 +1,6 @@
-# Implementation of Naive Bayes Classifier for tweets
+'''
+Implementation of Naive Bayes Classifier for tweets
+'''
 import sys
 import math
 from classifier import Classifier
@@ -15,25 +17,31 @@ class NaiveBayesClassifier(Classifier):
     def setThresholds(self, neg=1.0, pos=1.0):
         self.thresholds = [neg, pos]
 
-    # Returns the (log) probability of a tweet, given a particular class
-    # P(tweet | class)
     def probTweetClass(self, text, c):
+        '''
+        Returns the (log) probability of a tweet, given a particular class
+        P(tweet | class)
+        '''
         features = self.getFeatures(text)
         p = 0
         for f in features:
             p += math.log(self.weightedProb(f, c))
         return p
 
-    # Returns the (log) probability of a class, given a particular tweet
-    # P(class | tweet) = P(tweet | class) x P(class) / P(tweet)
-    # But P(tweet) is constant for all classes; so forget
     def probClassTweet(self, text, c):
+        '''
+        Returns the (log) probability of a class, given a particular tweet
+        P(class | tweet) = P(tweet | class) x P(class) / P(tweet)
+        But P(tweet) is constant for all classes; so forget
+        '''
         return self.probTweetClass(text, c) + math.log(self.probC(c))
 
-    # Returns 0 (negative) if P(class=0 | tweet) > P(class=1 | tweet) * thresholds[0]
-    # Return 1 (positive) if P(class=1 | tweet) > P(class=0 | tweet) * thresholds[1]
-    # Else return -1 (neutral)
     def classify(self, text):
+        '''
+        Returns 0 (negative) if P(class=0 | tweet) > P(class=1 | tweet) * thresholds[0]
+        Return 1 (positive) if P(class=1 | tweet) > P(class=0 | tweet) * thresholds[1]
+        Else return -1 (neutral)
+        '''
         p0 = self.probClassTweet(text, 0)
         p1 = self.probClassTweet(text, 1)
 

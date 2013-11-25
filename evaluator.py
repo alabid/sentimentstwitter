@@ -1,16 +1,20 @@
-# Used to evaluate the performance of the generic classifier
+'''
+Used to evaluate the performance of the generic classifier
+'''
 import re
 import csv
 
 class Evaluator:
-    # trainfname => name of file containing raw training data
-    # testfname => name of file containing raw testing data
-    # force == True iff user wants to overwrite classifier data
-    # allgrams -> list of ALL n-grams to use:
-    #   1, unigrams; 2, bigrams; 3, trigrams; and so on
-    #   so [[1], [2]] means evaluate on unigram model, then bigrams
-    # allweights -> list of ALL weights (used in classifier.weightedProb) to use:
-    #   [0.1, 1.0] means use weight=0.1, then weight=1.0
+    '''
+    trainfname => name of file containing raw training data
+    testfname => name of file containing raw testing data
+    force == True iff user wants to overwrite classifier data
+    allgrams -> list of ALL n-grams to use:
+               1, unigrams; 2, bigrams; 3, trigrams; and so on
+               so [[1], [2]] means evaluate on unigram model, then bigrams
+    allweights -> list of ALL weights (used in classifier.weightedProb) to use:
+               [0.1, 1.0] means use weight=0.1, then weight=1.0
+    '''
     def __init__(self, trainfname, devfname, testfname, *args, **kargs):
         self.usedev = kargs.get("usedev", False)
 
@@ -26,8 +30,11 @@ class Evaluator:
         # indicator variable to display evaluation results in STDOUT
         self.stdout = kargs.get("stdout", False)
         
-    # Prints the percent accuracy of the classifier on the test data
     def evaluate(self, classifier):
+        '''
+        Returns some stats about how accurate classifier is on
+        either the training set or the dev. set
+        '''
         totalneg = 0
         totalpos = 0
         correctneg = 0
