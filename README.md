@@ -42,7 +42,7 @@ various parameters for both types of classifiers.
   options for the Naive Bayes Evaluator. For more details, see 
   documentation in the evaluator file.
   
-* **Maximum Entropy Classifier**  
+* **Maximum Entropy Classifier:**  
   The input to an instance of the Maximum Entropy Evaluator
   is made up of four parameters:
 
