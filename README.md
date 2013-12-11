@@ -105,7 +105,7 @@ Run `python naivebayesevaluator.py -h` to see all
 options for the Naive Bayes Evaluator. For more details, see 
 documentation in the evaluator file.
   
-  ### Method 2: Maximum Entropy Classifier
+### Method 2: Maximum Entropy Classifier
   A maximum entropy classifier is a model which assigns weights to a set of
   features and classifies an example based on its particular features.
   The classification task is general to **k** classes, but we limit
@@ -156,7 +156,7 @@ documentation in the evaluator file.
   
 
   
-  ## Web Interface
+## Web Interface
   Our models were trained and evaluated
   on data accumulated in 2006. We thought it might be useful
   (and cool)
