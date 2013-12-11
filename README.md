@@ -62,7 +62,7 @@ using features not necessarily independent.
 
 Our implementation of Naive Bayes depends on the following
 parameters:
-* **Weight and Assumed Probability:** Both parameters are used as a 
+  * **Weight and Assumed Probability:** Both parameters are used as a 
     method of smoothing.
     For every word feature, we start with an assumed
     probability for each class.
@@ -74,37 +74,36 @@ parameters:
     P('dude' | class=0) = 0.25 and 
     P('dude' | class=1) = 0.75
 
-* **Word feature types:** We tried our Naive Bayes
+  * **Word feature types:** We tried our Naive Bayes
     classifier model on both unigram and unigram + bigram
     language models.
      
-* **Thresholds for sentiment classification**:
+  * **Thresholds for sentiment classification**:
      We train two thresholds, one for the negative class and
      one for the positive class.
 
-  We trained the naive bayes classifier (on the dev. set) using weight range
-  [0.000005,0.1] and
-  threshold range [0.5, 10.0]
-  (accuracy doesn't increase by much outside these ranges) while testing on unigrams standalone
-  and unigrams + bigrams. 
+We trained the naive bayes classifier (on the dev. set) using weight range
+[0.000005,0.1] and
+threshold range [0.5, 10.0]
+while testing on unigrams standalone and unigrams + bigrams. 
 
-  We saw a max accuracy of 78.8% on the dev. set. 
-  Using the "best"
-  parameters on our naive bayes classifier, we achieved an accuracy
-  of 83.01%. It turns out that our Naive Bayes classifier
-  performs better than that of Alec Go's. The Naive Bayes
-  classifier is implemented in 
-  **naivebayesclassifier.py** and the Naive Bayes
-  evaluator (which measures the effectiveness of the 
-  classifier) is implemented in 
-  **naivebayesevaluator.py**. 
+We saw a max accuracy of 78.8% on the dev. set. 
+Using the "best"
+parameters on our naive bayes classifier, we achieved an accuracy
+of 83.01%. It turns out that our Naive Bayes classifier
+performs better than that of Alec Go's. The Naive Bayes
+classifier is implemented in 
+**naivebayesclassifier.py** and the Naive Bayes
+evaluator (which measures the effectiveness of the 
+classifier) is implemented in 
+**naivebayesevaluator.py**. 
   
-  Run `python naivebayesevaluator.py -g 1 1,2` to see
-  the accuracy on the test set. 
+Run `python naivebayesevaluator.py -g 1 1,2` to see
+the accuracy on the test set. 
   
-  Run `python naivebayesevaluator.py -h` to see all 
-  options for the Naive Bayes Evaluator. For more details, see 
-  documentation in the evaluator file.
+Run `python naivebayesevaluator.py -h` to see all 
+options for the Naive Bayes Evaluator. For more details, see 
+documentation in the evaluator file.
   
   ### Method 2: Maximum Entropy Classifier
   A maximum entropy classifier is a model which assigns weights to a set of
@@ -136,7 +135,7 @@ parameters:
     * Minimum number of occurences a feature must have appeared
     to be included as a feature (**min_occurences**)
     * The number of iterations to run GIS (**max_iter**)
-    * What $n$-grams to use (**grams**, a list)
+    * What **n**-grams to use (**grams**, a list)
   
   These parameters can be tweaked in **maxentevaluator**. Generally,
   we noted the intuitive trend that using more data gave better results.
@@ -182,7 +181,7 @@ parameters:
   
 
 MIT Open Source License
-
+-----------------------
 Copyright © 2012 Daniel Alabi, Nick Jones
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
