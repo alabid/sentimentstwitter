@@ -131,11 +131,12 @@ documentation in the evaluator file.
   
   Therefore, the input to an instance of the Maximum Entropy Evaluator
   is made up of four parameters:
-    * Number of tweets to train on (**filesubset**)
-    * Minimum number of occurences a feature must have appeared
-    to be included as a feature (**min_occurences**)
-    * The number of iterations to run GIS (**max_iter**)
-    * What **n**-grams to use (**grams**, a list)
+
+  * Number of tweets to train on (**filesubset**)
+  * Minimum number of occurences a feature must have appeared
+  to be included as a feature (**min_occurences**)
+  * The number of iterations to run GIS (**max_iter**)
+  * What **n**-grams to use (**grams**, a list)
   
   These parameters can be tweaked in **maxentevaluator**. Generally,
   we noted the intuitive trend that using more data gave better results.
