@@ -1,10 +1,6 @@
 Sentiment Analysis on Twitter
 =============================
 
-### Screenshots of App
-* [Tweets] (http://blog.alabidan.me/?attachment_id=382)
-* [Donut Chart](http://blog.alabidan.me/?attachment_id=383)
-
 ### The Problem
 Given a tweet (that contains some text), estimate the sentiment
 (negative or positive) of the tweeter.
